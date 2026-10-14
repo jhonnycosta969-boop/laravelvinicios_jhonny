@@ -11,13 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('funcionario', function (Blueprint $table) {
+        if (Schema::hasTable('funcionarios')) {
+            return;
+        }
+
+        if (Schema::hasTable('funcionario')) {
+            Schema::rename('funcionario', 'funcionarios');
+
+            return;
+        }
+
+        Schema::create('funcionarios', function (Blueprint $table) {
             $table->id();
             $table->string('cargo');
             $table->string('departamento');
             $table->string('data_admissao');
-            $table->unsignedBigInteger('autor_id');
-            $table->foreign('autor_id')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreignId('autor_id')->constrained('usuarios')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,11 +36,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('funcionario', function (Blueprint $table) {
-            $table->dropForeign('[usuario_id]');
-            $table->dropColumn('usuario_id');
-    
-            });
-            Schema::dropIfExists('funcionario');
+        if (Schema::hasTable('funcionarios')) {
+            Schema::dropIfExists('funcionarios');
         }
+    }
 };

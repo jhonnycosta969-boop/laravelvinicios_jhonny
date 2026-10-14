@@ -29,4 +29,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function salvar_usuario($request)
+    {
+        $request->validate([
+            'nome' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'senha' => ['required', 'string', 'min:8'],
+        ]);
+
+        return self::create([
+            'name' => $request->nome,
+            'email' => $request->email,
+            'password' => $request->senha,
+        ]);
+    }
 }
+
